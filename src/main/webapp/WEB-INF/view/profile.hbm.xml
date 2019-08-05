@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class name="com.training.ocs.bean.ProfileBean" table="ocs_tbl_user_profile">
+        <id name="userid" column="userid">
+            <generator class="com.id.generators.UserIdGenerator"/>
+        </id>
+        <property name="firstname" column="firstname"></property>
+        <property name="lastname" column="lastname" />
+        <property name="dateofbirth" column="dateofbirth" />
+        <property name="gender" column="gender" />
+        <property name="street" column="street" />
+        <property name="location" column="location" />
+        <property name="city" column="city" />
+        <property name="state" column="state" />
+        <property name="pincode" column="pincode" />
+        <property name="mobileno" column="mobileno" />
+        <property name="emailid" column="emailid" />
+    </class>
+</hibernate-mapping>  
