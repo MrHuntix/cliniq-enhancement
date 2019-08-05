@@ -1,5 +1,6 @@
+<%@ page import="org.springframework.beans.factory.annotation.Value" %>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-    pageEncoding="ISO-8859-1"%>
+		 pageEncoding="ISO-8859-1"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
@@ -11,13 +12,13 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 <title>Clinic</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="shortcut icon" href="../favicon.ico">
-<link rel="stylesheet" type="text/css"
-	href="${pageContext.request.contextPath}/resources/css/demo.css" />
-<link rel="stylesheet" type="text/css"
-		href="${pageContext.request.contextPath}/resources/css/style4.css" />
-<script type="text/javascript"
-	src="${pageContext.request.contextPath}/resources/js/modernizr.custom.86080.js"></script>
+	<link rel="shortcut icon" href="../favicon.ico">
+	<link rel="stylesheet" type="text/css"
+		  href="{pageContext.request.contextPath}/resources/static/css/demo.css" />
+	<link rel="stylesheet" type="text/css"
+		  href={pageContext.request.contextPath}/resources/static/css/style4.css" />
+	<script type="text/javascript"
+			src="{pageContext.request.contextPath}/resources/static/js/modernizr.custom.86080.js"></script>
 <link rel="stylesheet"
 	href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
 <script
@@ -30,7 +31,6 @@
 </head>
 <body>
 	<body id="page">
-	<% ${pageContext.request.contextPath}; %>
 	<ul class="cb-slideshow">
 		<li><span>Image 01</span>
 			<div>
