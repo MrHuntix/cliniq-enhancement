@@ -13,12 +13,15 @@
 <title>Clinic</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="shortcut icon" href="../favicon.ico">
+	<spring:url value="/resources/static/css/demo.css" var="demoUrl"/>
 	<link rel="stylesheet" type="text/css"
-		  href="{pageContext.request.contextPath}/resources/static/css/demo.css" />
+		  href="${demoUrl}" />
 	<link rel="stylesheet" type="text/css"
-		  href={pageContext.request.contextPath}/resources/static/css/style4.css" />
+		  href="${pageContext.request.contextPath}/resources/static/css/demo.css" />
+	<link rel="stylesheet" type="text/css"
+		  href=${pageContext.request.contextPath}/resources/static/css/style4.css" />
 	<script type="text/javascript"
-			src="{pageContext.request.contextPath}/resources/static/js/modernizr.custom.86080.js"></script>
+			src="${pageContext.request.contextPath}/resources/static/js/modernizr.custom.86080.js"></script>
 <link rel="stylesheet"
 	href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
 <script
@@ -31,32 +34,6 @@
 </head>
 <body>
 	<body id="page">
-	<ul class="cb-slideshow">
-		<li><span>Image 01</span>
-			<div>
-				<h3>world-class facilities</h3>
-			</div></li>
-		<li><span>Image 02</span>
-			<div>
-				<h3>Expert-doctors</h3>
-			</div></li>
-		<li><span>Image 03</span>
-			<div>
-				<h3>state-of-the-art</h3>
-			</div></li>
-		<li><span>Image 04</span>
-			<div>
-				<h3>top-ranked</h3>
-			</div></li>
-		<li><span>Image 05</span>
-			<div>
-				<h3>patient-friendly</h3>
-			</div></li>
-		<li><span>Image 06</span>
-			<div>
-				<h3>globally acclaimed</h3>
-			</div></li>
-	</ul>
 	<%-- 	<c:if test="${profile.loginStatus==1}"> --%>
 	<%-- 		<c:redirect url="patient"></c:redirect> --%>
 	<%-- 	</c:if>	 --%>
@@ -270,5 +247,6 @@
 					</div>
 				</div>
 			</div>
+        </div>
 </body>
 </html>
