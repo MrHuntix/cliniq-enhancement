@@ -41,7 +41,7 @@
             <a class="nav-link" href="intimate">get intimate report</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="logout?patientId=${profile.profileBean.userID }">logout</a>
+            <a class="nav-link" href="logout?patientId=${profile.profileBean.userId }">logout</a>
           </li>
         </ul>
     </nav>
@@ -58,15 +58,15 @@
       	</tr>
       	<c:forEach var="report" items="${reports }">
       		<tr>
-      			<td>${report.appointmentID }</td>
-      			<td>${report.doctorID }</td>
+      			<td>${report.appointmentId }</td>
+      			<td>${report.doctorId }</td>
       			<td>${report.patient.ailmentType }</td>
       			<td>${report.appointmentDate }</td>
       			<td>${report.appointmentTime }</td>
       			<td>
       				<form action="updatedoctor" method="post">
-      					<input type="hidden" name="aid" value="${report.appointmentID }"/>
-      					<input type="hidden" name="did" value="${report.doctorID }"/>
+      					<input type="hidden" name="aid" value="${report.appointmentId }"/>
+      					<input type="hidden" name="did" value="${report.doctorId }"/>
       					<input type="hidden" name="slot" value="${report.appointmentTime }"/>
       					<input type="hidden" name="date" value="${report.appointmentDate }"/>
       					<input type="hidden" name="ailment" value="${report.patient.ailmentType }"/>
@@ -91,9 +91,9 @@
 			</tr>
 		<c:forEach var="appointment" items="${appointmentsdate}">
 			<tr>
-				<td>${appointment.appointmentID }</td>
-				<td>${appointment.doctorID }</td>
-				<td>${appointment.patient.patientID }</td>
+				<td>${appointment.appointmentId }</td>
+				<td>${appointment.doctorId }</td>
+				<td>${appointment.patient.patientId }</td>
 				<td>${appointment.patient.ailmentType }</td>
 				<td>${appointment.patient.ailmentDetails }</td>
 				<td>${appointment.patient.diagnosisHistory }</td>
@@ -118,7 +118,7 @@
 				</tr>
 				<tr>
 					<td>new doctor id</td>
-					<td><input type="text" name="newid" value="${s.doctorID }"/></td>
+					<td><input type="text" name="newid" value="${s.doctorId }"/></td>
 				</tr>
 				<tr>
 					<td>specialization</td>

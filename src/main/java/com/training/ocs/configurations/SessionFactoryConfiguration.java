@@ -36,7 +36,7 @@ public class SessionFactoryConfiguration {
         LocalContainerEntityManagerFactoryBean em
                 = new LocalContainerEntityManagerFactoryBean();
         Properties properties = new Properties();
-        properties.setProperty("hibernate.hbm2ddl.auto", "create-drop");
+        properties.setProperty("hibernate.hbm2ddl.auto", "create");
         properties.setProperty("hibernate.dialect", "org.hibernate.dialect.H2Dialect");
         em.setDataSource(dataSource());
         em.setPackagesToScan("com.training.ocs.bean");
@@ -70,7 +70,7 @@ public class SessionFactoryConfiguration {
         LocalSessionFactoryBean sessionFactoryBean = new LocalSessionFactoryBean();
         sessionFactoryBean.setDataSource(dataSource());
         sessionFactoryBean.setHibernateProperties(p);
-        sessionFactoryBean.setPackagesToScan("com.training.ocs.bean");
+        sessionFactoryBean.setPackagesToScan("com.training.ocs.beans");
         return sessionFactoryBean;
     }
 }

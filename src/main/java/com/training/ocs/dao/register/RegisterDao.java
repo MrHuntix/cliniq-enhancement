@@ -1,12 +1,11 @@
 package com.training.ocs.dao.register;
 
-import com.training.ocs.bean.CredentialsBean;
+import com.training.ocs.beans.Credentials;
 import com.training.ocs.exception.CliniqueException;
 
 public interface RegisterDao {
-	public String registerUser(CredentialsBean p) throws CliniqueException;
-	public String loginUser(CredentialsBean c) throws CliniqueException;
-	public int logoutUser(String userid) throws CliniqueException;
-	public CredentialsBean getuser(String id) throws CliniqueException;
-	//public CredentialsBean getUpdateduser(String id);
+	String registerUser(Credentials credentials) throws CliniqueException;
+	String loginUser(Credentials credentials) throws CliniqueException;
+	int logoutUser(int userId) throws CliniqueException;
+	Credentials getuser(int id) throws CliniqueException;
 }

@@ -1,4 +1,4 @@
-package com.training.ocs.dao.administrator;
+package com.training.ocs.service.administrator;
 
 import com.training.ocs.beans.Appointment;
 import com.training.ocs.beans.Doctor;
@@ -9,7 +9,7 @@ import com.training.ocs.exception.CliniqueException;
 import java.util.Date;
 import java.util.List;
 
-public interface AdministratorDao {
+public interface AdministratorService {
 	String addDoctor(Doctor doctor) throws CliniqueException; // returns SUCCESS or FAIL string
 	String addSchedule(Schedule schedule) throws CliniqueException;
 	List<Doctor> viewAllDoctors() throws CliniqueException;

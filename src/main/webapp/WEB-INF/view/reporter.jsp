@@ -37,7 +37,7 @@
              <a class="nav-link" href="genreport">generate report</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="logout?patientId=${profile.profileBean.userID }">logout</a>
+            <a class="nav-link" href="logout?patientId=${profile.profileBean.userId }">logout</a>
           </li>
         </ul>
       </nav>
@@ -59,10 +59,10 @@
       			</tr>
       			<c:forEach var="appointment" items="${appointments }">
       				<tr>
-      					<td>${appointment.appointmentID }</td>
-      					<td>${appointment.doctorID }</td>
-      					<td>${appointment.patient.patientID }</td>
-      					<td>${appointment.patient.userID }</td>
+      					<td>${appointment.appointmentId }</td>
+      					<td>${appointment.doctorId }</td>
+      					<td>${appointment.patient.patientId }</td>
+      					<td>${appointment.patient.userId }</td>
       					<td>${appointment.patient.ailmentType }</td>
       					<td>${appointment.patient.ailmentDetails }</td>
       					<td>${appointment.patient.diagnosisHistory }</td>
@@ -83,7 +83,7 @@
       			</tr>
       			<c:forEach var="doctor" items="${availdoctors }">
       				<tr>
-      					<td>${doctor.doctorID }</td>
+      					<td>${doctor.doctorId }</td>
       					<td>${doctor.doctorName }</td>
       					<td>${doctor.qualification }</td>
       					<td>${doctor.specialization }</td>

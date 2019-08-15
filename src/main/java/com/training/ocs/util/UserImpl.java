@@ -1,23 +1,21 @@
 package com.training.ocs.util;
 
-import org.hibernate.Query;
+import com.training.ocs.beans.Credentials;
 import org.hibernate.Session;
-import com.training.ocs.bean.CredentialsBean;
-import com.training.ocs.bean.ProfileBean;
 
 public class UserImpl implements User{
 
 	@Override
-	public String login(CredentialsBean credentialsBean,Session session) {
-		System.out.println("user: "+credentialsBean);
+	public String login(Credentials credentials, Session session) {
+		System.out.println("user: "+credentials);
 		session.beginTransaction();
-		Query query=session.getNamedQuery("verify");
-		query.setString("id", credentialsBean.getProfileBean().getUserID());
-		CredentialsBean c=(CredentialsBean)query.uniqueResult();
+		org.hibernate.query.Query<Credentials> credentialsQuery = session.createNamedQuery("verify", Credentials.class);
+		credentialsQuery.setParameter("id",credentials.getCredentialId());
+		Credentials c=credentialsQuery.getSingleResult();
 		System.out.println("db: "+c);
 		if(c==null) {
 			return "invalid";
-		}else if(!c.getPassword().equals(credentialsBean.getPassword())) {
+		}else if(!c.getPassword().equals(credentials.getPassword())) {
 			return "fail";
 		}
 		return c.getUserType();

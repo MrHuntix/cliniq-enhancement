@@ -1,9 +1,8 @@
 package com.training.ocs.util;
 
+import com.training.ocs.beans.Credentials;
 import org.hibernate.Session;
-
-import com.training.ocs.bean.*;
 public interface User {
-	String login(CredentialsBean credentialsBean, Session session);
+	String login(Credentials credentials, Session session);
 
 }

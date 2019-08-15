@@ -1,11 +1,11 @@
 package com.training.ocs.service.register;
 
-import com.training.ocs.bean.CredentialsBean;
+import com.training.ocs.beans.Credentials;
 import com.training.ocs.exception.CliniqueException;
 
 public interface RegisterService {
-	public String registerUser(CredentialsBean p) throws CliniqueException;
-	public String loginUser(CredentialsBean c) throws CliniqueException;
-	public CredentialsBean getuser(String id) throws CliniqueException;
-	public int logoutUser(String userid) throws CliniqueException;
+	String registerUser(Credentials credentials) throws CliniqueException;
+	String loginUser(Credentials credentials) throws CliniqueException;
+	int logoutUser(int userId) throws CliniqueException;
+	Credentials getuser(int id) throws CliniqueException;
 }

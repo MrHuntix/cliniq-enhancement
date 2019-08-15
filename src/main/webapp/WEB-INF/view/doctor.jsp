@@ -62,18 +62,18 @@
 				<td>${doctor.specialization }</td>
 				<td>${doctor.yearsOfExperience }</td>
 				<td>${doctor.contactNumber }</td>
-				<td>${doctor.emailID }</td>
+				<td>${doctor.emailId }</td>
 				<td>
 					<form method="post" action="delete">
-						<input type="hidden" name="id" value="${doctor.doctorID }" />
+						<input type="hidden" name="id" value="${doctor.doctorId }" />
 						<input type="submit" class="btn btn-primary" value="delete" name="delete"/>
 					</form>
 				</td>
 				<td>
-					 <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#d${doctor.doctorID }d">${doctor.doctorID }</button>
+					 <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#d${doctor.doctorId }d">${doctor.doctorId }</button>
 					  <div id="d${doctor.doctorID }d" class="collapse">
 					   	<form method="post" action ="applyleave">
-					    	<input type="hidden" name="did" value="${doctor.doctorID }" />
+					    	<input type="hidden" name="did" value="${doctor.doctorId }" />
 					    	from: <input type="date" name="fromdate"/><br/>
 							to: <input type="date" name="todate"/><br/>
 							reason: <input type="text" name="reason" placeholder="reason"/>

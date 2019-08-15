@@ -1,35 +1,26 @@
 package com.training.ocs.controller;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import javax.validation.Valid;
-
+import com.training.ocs.beans.Appointment;
+import com.training.ocs.beans.Credentials;
+import com.training.ocs.beans.Doctor;
+import com.training.ocs.beans.Profile;
+import com.training.ocs.exception.CliniqueException;
+import com.training.ocs.service.patient.Patient;
+import com.training.ocs.service.register.RegisterService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.SessionAttribute;
-import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.training.ocs.bean.AppointmentBean;
-import com.training.ocs.bean.CredentialsBean;
-import com.training.ocs.bean.DoctorBean;
-import com.training.ocs.bean.PatientBean;
-import com.training.ocs.bean.ProfileBean;
-import com.training.ocs.exception.CliniqueException;
-import com.training.ocs.service.administrator.Administrator;
-import com.training.ocs.service.patient.Patient;
-import com.training.ocs.service.register.RegisterService;
+import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 
 @Controller
 public class TestController {
@@ -42,7 +33,7 @@ public class TestController {
 			//redirects the user to the index page
 			@RequestMapping(value= {"/","home"})
 			public ModelAndView login(HttpSession session){
-				CredentialsBean sessionbean=(CredentialsBean) session.getAttribute("profile");
+				Credentials sessionbean=(Credentials) session.getAttribute("profile");
 				System.out.println("current session: "+sessionbean);
 				if(sessionbean==null)
 					return new ModelAndView("index");
@@ -58,20 +49,21 @@ public class TestController {
 			//registers the user into the database.
 			//we need to auto generate a proper id so direct registration will give error 
 			@RequestMapping(value="add",method=RequestMethod.POST)
-			public ModelAndView register(@Valid @ModelAttribute("profile")ProfileBean p,BindingResult b,@RequestParam("userType")String userType,@RequestParam("password")String password) {//@Valid @ModelAttribute("profile")ProfileBean p
+			public ModelAndView register(@Valid @ModelAttribute("profile")Profile p, BindingResult b, @RequestParam("userType")String userType, @RequestParam("password")String password) {//@Valid @ModelAttribute("profile")ProfileBean p
 				if(b.hasErrors())
 					System.out.println("err: "+b.getFieldError().getDefaultMessage());
 				System.out.println("register: "+p);
 				System.out.println("usertype: "+userType+", password: "+password);
-				CredentialsBean c=new CredentialsBean();
-				c.setProfileBean(p);
+				Credentials c=new Credentials();
 				c.setPassword(password);
 				c.setUserType(userType);
+				c.setProfileBean(p);
 				String username = null;
 				try {
 					username = registerService.registerUser(c);
 				} catch (CliniqueException e) {
 					// TODO Auto-generated catch block
+					e.printStackTrace();
 					return new ModelAndView("error","errormsg",e.getMessage());
 				}
 				System.out.println("username: "+username);
@@ -87,16 +79,18 @@ public class TestController {
 		 
 			@RequestMapping(value="login",method=RequestMethod.POST)
 			public ModelAndView loginUser(HttpSession session,@RequestParam("username")String username,@RequestParam("password")String password) {
-				CredentialsBean c=new CredentialsBean();
-				ProfileBean p=new ProfileBean();
-				p.setUserID(username);
+				Credentials c=new Credentials();
+				Profile p=new Profile();
+				p.setUserId(Integer.parseInt(username));
 				c.setPassword(password);
+				c.setCredentialId(Integer.parseInt(username));
 				c.setProfileBean(p);
 				String message = null;
 				try {
 					message = registerService.loginUser(c);
 				} catch (CliniqueException e) {
 					// TODO Auto-generated catch block
+					e.printStackTrace();
 					return new ModelAndView("error","errormsg",e.getMessage());
 				}
 				if(message.equals("invalid")) {
@@ -106,9 +100,10 @@ public class TestController {
 				}
 				else if(message.equals("a")) {
 					try {
-						c=registerService.getuser(username);
+						c=registerService.getuser(Integer.parseInt(username));
 					} catch (CliniqueException e) {
 						// TODO Auto-generated catch block
+						e.printStackTrace();
 						return new ModelAndView("error","errormsg",e.getMessage());
 					}
 					session.setAttribute("profile",c);
@@ -116,9 +111,10 @@ public class TestController {
 				}
 				else if(message.equals("p")) {
 					try {
-						c=registerService.getuser(username);
+						c=registerService.getuser(Integer.parseInt(username));
 					} catch (CliniqueException e) {
 						// TODO Auto-generated catch block
+						e.printStackTrace();
 						return new ModelAndView("error","errormsg",e.getMessage());
 					}
 					SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd");
@@ -129,9 +125,10 @@ public class TestController {
 				else {
 					try {
 						//session.setAttribute("profile",c);
-						c=registerService.getuser(username);
+						c=registerService.getuser(Integer.parseInt(username));
 					} catch (CliniqueException e) {
 						// TODO Auto-generated catch block
+						e.printStackTrace();
 						return new ModelAndView("error","errormsg",e.getMessage());
 					}
 					session.setAttribute("profile",c);
@@ -141,7 +138,7 @@ public class TestController {
 			}
 			@RequestMapping(value="patienthome")
 			public ModelAndView patientHome(HttpSession session){
-				CredentialsBean sessionbean=(CredentialsBean) session.getAttribute("profile");
+				Credentials sessionbean=(Credentials) session.getAttribute("profile");
 				if(sessionbean==null)
 					return new ModelAndView("index");
 				return new ModelAndView("patient");
@@ -152,9 +149,10 @@ public class TestController {
 				System.out.println(session.getAttribute("profile"));
 				int res ;
 				try {
-					res = registerService.logoutUser(id);
+					res = registerService.logoutUser(Integer.parseInt(id));
 				} catch (CliniqueException e) {
 					// TODO Auto-generated catch block
+					e.printStackTrace();
 					return new ModelAndView("error","errormsg",e.getMessage());
 				}
 				session.invalidate();
@@ -169,9 +167,10 @@ public class TestController {
 				System.out.println("date: "+date.toString());
 				String c = null;
 				try {
-					c = patientService.checkAppointment(id, date, slot);
+					c = patientService.checkAppointment(Integer.parseInt(id), date, slot);
 				} catch (CliniqueException e) {
 					// TODO Auto-generated catch block
+					e.printStackTrace();
 					return new ModelAndView("error","errormsg",e.getMessage());
 				}
 				System.out.println("test controller success fail: "+c);
@@ -179,14 +178,14 @@ public class TestController {
 				if(c.equals("1"))
 					message="slot "+slot+" for date "+date+" is not available";
 				else{
-					AppointmentBean a=new AppointmentBean();
-					PatientBean p=new PatientBean();
-					p.setUserID(pid);
+					Appointment a=new Appointment();
+					com.training.ocs.beans.Patient p=new com.training.ocs.beans.Patient();
+					p.setUserId(Integer.parseInt(pid));
 					p.setAppointmentDate(date);
 					p.setAilmentDetails(details);
 					p.setAilmentType(ailment);
 					p.setDiagnosisHistory(history);
-					a.setPatient(p);
+					a.setPatientBean(p);
 					a.setDoctorID(id);
 					a.setAppointmentDate(date);
 					a.setAppointmentTime(slot);
@@ -195,6 +194,7 @@ public class TestController {
 						message=patientService.bookAppointment(a);
 					} catch (CliniqueException e) {
 						// TODO Auto-generated catch block
+						e.printStackTrace();
 						return new ModelAndView("error","errormsg",e.getMessage());
 					}
 				}
@@ -208,32 +208,34 @@ public class TestController {
 					@RequestParam("history")String history,@RequestParam("pid")String patient){
 				ModelAndView mv=new ModelAndView();
 				String msg="";
-				DoctorBean doctorBean = null;
+				Doctor doctorBean = null;
 				try {
 					doctorBean = patientService.getDoctor(date, slot, ailment);
 				} catch (CliniqueException e) {
 					// TODO Auto-generated catch block
+					e.printStackTrace();
 					return new ModelAndView("error","errormsg",e.getMessage());
 				}
 				System.out.println("doctor result: "+doctorBean);
 				if(doctorBean==null) {
 					msg="no doctor available for the combination( "+date+", "+slot+", "+ailment+" )";
 				}else {
-					PatientBean p=new PatientBean();
-					p.setUserID(patient);
+					com.training.ocs.beans.Patient p=new  com.training.ocs.beans.Patient();
+					p.setUserId(Integer.parseInt(patient));
 					p.setAppointmentDate(date);
 					p.setAilmentType(ailment);
 					p.setAilmentDetails(details);
 					p.setDiagnosisHistory(history);
-					AppointmentBean a=new AppointmentBean();
-					a.setDoctorID(String.valueOf(doctorBean.getDoctorID()));
-					a.setPatient(p);
+					Appointment a=new Appointment();
+					a.setDoctorID(String.valueOf(doctorBean.getDoctorId()));
+					a.setPatientBean(p);
 					a.setAppointmentDate(date);
 					a.setAppointmentTime(slot);
 					try {
 						patientService.bookAppointment(a);
 					} catch (CliniqueException e) {
 						// TODO Auto-generated catch block
+						e.printStackTrace();
 						return new ModelAndView("error","errormsg",e.getMessage());
 					}
 					msg="appointment booked successfully for the date "+date+" with doctor "+doctorBean.getDoctorName();
@@ -246,11 +248,12 @@ public class TestController {
 			@RequestMapping(value="showappointmentsp")
 			public ModelAndView showappointments(@RequestParam("patientId")String id) {
 				System.out.println("id: "+id);
-				List<AppointmentBean> apps = null;
+				List<Appointment> apps = null;
 				try {
-					apps = patientService.getAppointments(id);
+					apps = patientService.getAppointments(Integer.parseInt(id));
 				} catch (CliniqueException e) {
 					// TODO Auto-generated catch block
+					e.printStackTrace();
 					return new ModelAndView("error","errormsg",e.getMessage());
 				}
 				System.out.println("appointments: "+apps);
@@ -259,11 +262,12 @@ public class TestController {
 			
 			@RequestMapping(value="getappointmentsfordate",method=RequestMethod.POST)
 			public ModelAndView getAppointmentsForDate(@RequestParam("did")String id,@RequestParam("date")java.sql.Date date) {
-				List<AppointmentBean> appointments = null;
+				List<Appointment> appointments = null;
 				try {
-					appointments = patientService.getAppointmentsByDate(date, id);
+					appointments = patientService.getAppointmentsByDate(date, Integer.parseInt(id));
 				} catch (CliniqueException e) {
 					// TODO Auto-generated catch block
+					e.printStackTrace();
 					return new ModelAndView("error","errormsg",e.getMessage());
 				}
 				if(appointments.size()==0)
@@ -277,9 +281,10 @@ public class TestController {
 				System.out.println("updating ailment");
 				int res = 0;
 				try {
-					res = patientService.updatePaientAilment(pid, ailment, details, history);
+					res = patientService.updatePaientAilment(Integer.parseInt(pid), ailment, details, history);
 				} catch (CliniqueException e) {
 					// TODO Auto-generated catch block
+					e.printStackTrace();
 					return new ModelAndView("error","errormsg",e.getMessage());
 				}
 				if(res<1)//showappointments?patientId=pa1021

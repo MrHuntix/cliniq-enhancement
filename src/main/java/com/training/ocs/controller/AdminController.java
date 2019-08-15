@@ -1,14 +1,8 @@
 package com.training.ocs.controller;
 
-import java.sql.Date;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.servlet.http.HttpSession;
-import javax.validation.Valid;
-
+import com.training.ocs.beans.*;
+import com.training.ocs.exception.CliniqueException;
+import com.training.ocs.service.administrator.AdministratorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -18,24 +12,23 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.training.ocs.bean.AppointmentBean;
-import com.training.ocs.bean.CredentialsBean;
-import com.training.ocs.bean.DoctorBean;
-import com.training.ocs.bean.LeaveBean;
-import com.training.ocs.bean.PatientBean;
-import com.training.ocs.bean.ScheduleBean;
-import com.training.ocs.exception.CliniqueException;
-import com.training.ocs.service.administrator.Administrator;
+import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
+import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 public class AdminController {
 	
 	@Autowired
-	Administrator administrator;
+    AdministratorService administrator;
 	
 	@RequestMapping(value="gotoadmin")
 	public ModelAndView goHomeAdmin(HttpSession session) {
-		CredentialsBean sessionbean=(CredentialsBean) session.getAttribute("profile");
+		Credentials sessionbean=(Credentials) session.getAttribute("profile");
 		System.out.println("current session: "+sessionbean);
 		if(sessionbean==null)
 			return new ModelAndView("index");
@@ -44,15 +37,16 @@ public class AdminController {
 	
 	@RequestMapping(value= "doctors")
 	public ModelAndView showDoctors(HttpSession session) {
-		CredentialsBean sessionbean=(CredentialsBean) session.getAttribute("profile");
+		Credentials sessionbean=(Credentials) session.getAttribute("profile");
 		System.out.println("current session: "+sessionbean);
 		if(sessionbean==null)
 			return new ModelAndView("index");
-		List<DoctorBean> doctors = null;
+		List<Doctor> doctors = null;
 		try {
 			doctors = administrator.viewAllDoctors();
 		} catch (CliniqueException e) {
 			// TODO Auto-generated catch block
+			e.printStackTrace();
 			return new ModelAndView("error","errormsg",e.getMessage());
 		}
 		if(doctors.size()==0)
@@ -61,19 +55,20 @@ public class AdminController {
 	}
 	
 	@RequestMapping(value="adddoc",method=RequestMethod.POST)
-	public ModelAndView addDoctors(@Valid @ModelAttribute("doctor")DoctorBean d,BindingResult b,@RequestParam("days")String days,@RequestParam("slots")String slots) {
+	public ModelAndView addDoctors(@Valid @ModelAttribute("doctor")Doctor d,BindingResult b,@RequestParam("days")String days,@RequestParam("slots")String slots) {
 		if(b.hasErrors())
 			System.out.println(b.toString());
 		System.out.println("doctor: "+d);
-		ScheduleBean s=new ScheduleBean();
+		Schedule s=new Schedule();
 		s.setAvailableDays(days);
 		s.setSlots(slots);
-		s.setDoctor(d);
+		s.setDoctorBean(d);
 		String result;
 		try {
 			result = administrator.addSchedule(s);
 		} catch (CliniqueException e) {
 			// TODO Auto-generated catch block
+			e.printStackTrace();
 			return new ModelAndView("error","errormsg",e.getMessage());
 		}
 		return new ModelAndView("administrator","adddocresult",result);
@@ -84,9 +79,10 @@ public class AdminController {
 		System.out.println("id: "+id);
 		int result;
 		try {
-			result = administrator.removeDoctor(id);
+			result = administrator.removeDoctor(Integer.parseInt(id));
 		} catch (CliniqueException e) {
 			// TODO Auto-generated catch block
+			e.printStackTrace();
 			return new ModelAndView("error","errormsg",e.getMessage());
 		}
 		if(result==0)
@@ -97,10 +93,11 @@ public class AdminController {
 	@RequestMapping(value="showappointments",method=RequestMethod.POST)
 	public ModelAndView showAppointments(@RequestParam("adate")Date date){		
 		System.out.println("showing appointments for date: "+date);
-		List<AppointmentBean> appointments = null;
+		List<Appointment> appointments = null;
 		try {
 			appointments = administrator.getAppointmentsForDate(date);
 		} catch (CliniqueException e) {
+			e.printStackTrace();
 			// TODO Auto-generated catch block
 			return new ModelAndView("error","errormsg",e.getMessage());
 		}
@@ -120,8 +117,8 @@ public class AdminController {
 	public ModelAndView applyLeave(@RequestParam("did")String did,@RequestParam("fromdate")Date fromdate,
 			@RequestParam("todate")Date todate,@RequestParam("reason")String reason,@RequestParam("status")String status){
 		System.out.println("doctor id: "+did+", from date: "+fromdate+", to date: "+todate+", reason: "+reason+", status: "+status);
-		LeaveBean l=new LeaveBean();
-		l.setDoctorID(did);
+		Leave l=new Leave();
+		l.setDoctorId(did);
 		l.setLeaveFrom(fromdate);
 		l.setLeaveTo(todate);
 		l.setReason(reason);
@@ -130,6 +127,7 @@ public class AdminController {
 			int result=administrator.applyLeave(l);
 		} catch (CliniqueException e) {
 			// TODO Auto-generated catch block
+			e.printStackTrace();
 			return new ModelAndView("error","errormsg",e.getMessage());
 		}
 		return new ModelAndView("administrator","adddocresult","leave applied successfully for the period "+fromdate+" - "+todate+".");
@@ -141,17 +139,19 @@ public class AdminController {
 			return new ModelAndView("patient","doctors",administrator.viewAllDoctors());
 		} catch (CliniqueException e) {
 			// TODO Auto-generated catch block
+			e.printStackTrace();
 			return new ModelAndView("error","errormsg",e.getMessage());
 		}
 	}
 	
 	@RequestMapping(value="intimate")
 	public ModelAndView getDoctorsOnLeaveButHaveAppointment() {
-		List<AppointmentBean> report = null;
+		List<Appointment> report = null;
 		try {
 			report = administrator.getIntiamteReport();
 		} catch (CliniqueException e) {
 			// TODO Auto-generated catch block
+			e.printStackTrace();
 			return new ModelAndView("error","errormsg",e.getMessage());
 		}
 		if(report.size()==0)
@@ -169,26 +169,28 @@ public class AdminController {
 			udate = sdf1.parse(date);
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
+			e.printStackTrace();
 			return new ModelAndView("error","errormsg",e.getMessage());
 		}
 		Date sqlStartDate = new Date(udate.getTime());
 		System.out.println("finding an update for appointment "+aid+" having doctor of id: "+did);
-		DoctorBean result = null;
+		Doctor result = null;
 		try {
-			result = administrator.updateAndReplaceDoctorOnLeave(sqlStartDate, ailment, did,slot);
+			result = administrator.updateAndReplaceDoctorOnLeave(sqlStartDate, ailment, Integer.parseInt(did),slot);
 		} catch (CliniqueException e) {
 			// TODO Auto-generated catch block
+			e.printStackTrace();
 			return new ModelAndView("error","errormsg",e.getMessage());
 		}
 		System.out.println("replacement doctor: "+result);
 		ModelAndView mv=new ModelAndView();
 		
-		if(result.getDoctorID()==Integer.valueOf(did)){
+		if(result.getDoctorId()==Integer.valueOf(did)){
 			//mv.addObject("suggestionmsg","could not suggest another doctor");
 			return new ModelAndView("administrator","adddocresult","could not suggest another doctor");
 		}
 		mv.addObject("oldid", did);
-		List<DoctorBean> suggestions=new ArrayList<>();
+		List<Doctor> suggestions=new ArrayList<>();
 		suggestions.add(result);
 		mv.addObject("suggestion",suggestions);
 		mv.addObject("appointmentid", aid);
@@ -201,12 +203,15 @@ public class AdminController {
 		System.out.println("oldid: "+oldid+" new id:"+newid+" appointment: "+aid);
 		String result = null;
 		try {
-			result = administrator.updateDoctorOnLeave(oldid, newid, Integer.parseInt(aid));
+			result = administrator.updateDoctorOnLeave(Integer.parseInt(oldid), Integer.parseInt(newid), Integer.parseInt(aid));
 		} catch (NumberFormatException e) {
+			e.printStackTrace();
 			// TODO Auto-generated catch block
+			e.printStackTrace();
 			return new ModelAndView("error","errormsg",e.getMessage());
 		} catch (CliniqueException e) {
 			// TODO Auto-generated catch block
+			e.printStackTrace();
 			return new ModelAndView("error","errormsg",e.getMessage());
 		}
 		if(result.equals("0"))

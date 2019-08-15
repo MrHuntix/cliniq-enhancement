@@ -1,16 +1,15 @@
 package com.training.ocs.dao.register;
 
-import java.math.BigDecimal;
-
+import com.training.ocs.beans.Credentials;
+import com.training.ocs.exception.CliniqueException;
+import com.training.ocs.util.UserImpl;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.training.ocs.bean.CredentialsBean;
-import com.training.ocs.exception.CliniqueException;
-import com.training.ocs.util.UserImpl;
+import java.math.BigInteger;
 
 @Repository
 public class RegisterDaoImpl implements RegisterDao {
@@ -19,74 +18,81 @@ public class RegisterDaoImpl implements RegisterDao {
 	SessionFactory sessionFactory;
 	
 	@Override
-	public String registerUser(CredentialsBean p) throws CliniqueException{
+	public String registerUser(Credentials credentials) throws CliniqueException{
 		try{
-			System.out.println("register: "+p);
+			System.out.println("register: "+credentials);
 			String ret="";
 			Session session=sessionFactory.openSession();
 			session.beginTransaction();
-			Query query=session.createSQLQuery("select id_seq.nextval from dual");
-			BigDecimal d=(BigDecimal) query.uniqueResult();
-			String id=p.getProfileBean().getFirstName().substring(0,2)+String.valueOf(d);
+			Query query=session.createSQLQuery("select id_seq.nextval from dual;");
+			BigInteger d=(BigInteger) query.uniqueResult();
+			int id= Integer.parseInt(String.valueOf(d));
 			System.out.println("id: "+id);
-			p.getProfileBean().setUserID(id);
-			session.save(p);
+			credentials.getProfileBean().setUserId(id);
+			credentials.setCredentialId(id);
+			session.save(credentials.getProfileBean());
+			session.save(credentials);
 			session.getTransaction().commit();
+			System.out.println("s3");
 			session.close();
-			return id;
+			return String.valueOf(id);
 		}catch(Exception e){
+			e.printStackTrace();
 			throw new CliniqueException(e.getMessage());
 		}
 		
 	}
 
 	@Override
-	public String loginUser(CredentialsBean c) throws CliniqueException{
+	public String loginUser(Credentials credentials) throws CliniqueException{
 		try{
 			Session session=sessionFactory.openSession();
-			String message=new UserImpl().login(c, session);
+			String message=new UserImpl().login(credentials, session);
 			session.close();
 			return message;
 		}catch(Exception e){
+			e.printStackTrace();
 			throw new CliniqueException(e.getMessage());
 		}
 		
 	}
 
 	@Override
-	public CredentialsBean getuser(String id) throws CliniqueException{
+	public Credentials getuser(int id) throws CliniqueException{
 		try{
 			Session session=sessionFactory.openSession();
 			session.beginTransaction();
-			Query uquery=session.getNamedQuery("update_login_status");
-			uquery.setString("id", id);
-			int res=uquery.executeUpdate();
+			org.hibernate.query.Query<Credentials> credentialsQuery = session.createNamedQuery("update_login_status");
+			credentialsQuery.setParameter("id",id);
+			int res=credentialsQuery.executeUpdate();
 			//session.getTransaction().commit();
 			Query query=session.getNamedQuery("verify");
-			query.setString("id", id);
-			CredentialsBean c=(CredentialsBean)query.uniqueResult();
+			query.setParameter("id", id);
+			Credentials c=(Credentials)query.uniqueResult();
 			session.getTransaction().commit();
 			session.close();
 			System.out.println("registerdao: "+c);
 			return c;
 		}catch(Exception e){
+			e.printStackTrace();
 			throw new CliniqueException(e.getMessage());
 		}
 		
 	}
 
 	@Override
-	public int logoutUser(String userid) throws CliniqueException{
+	public int logoutUser(int userId) throws CliniqueException{
 		try{
 			Session session=sessionFactory.openSession();
 			session.beginTransaction();
 			Query query=session.getNamedQuery("update_logout_status");
-			query.setString("id", userid);
+			query.setParameter("id", userId);
 			int res=query.executeUpdate();
 			session.getTransaction().commit();
 			session.close();
 			return res;
 		}catch(Exception e){
+			e.printStackTrace();
 			throw new CliniqueException(e.getMessage());
 		}
 		

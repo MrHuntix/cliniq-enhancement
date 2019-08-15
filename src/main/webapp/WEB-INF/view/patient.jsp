@@ -30,13 +30,13 @@
         <!-- Links -->
         <ul class="navbar-nav">
           <li class="nav-item">
-            <a class="nav-link" href="showappointmentsp?patientId=${profile.profileBean.userID }">view appointments</a>
+            <a class="nav-link" href="showappointmentsp?patientId=${profile.profileBean.userId }">view appointments</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="getappointments">get appointments</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="logout?patientId=${profile.profileBean.userID }">logout</a>
+            <a class="nav-link" href="logout?patientId=${profile.profileBean.userId }">logout</a>
           </li>
         </ul>
       </nav>
@@ -60,9 +60,9 @@
       				<td>${appointment.appointmentTime }</td>
       				<td>${appointment.patient.ailmentType }</td>
       				<td>${appointment.patient.ailmentDetails }</td>
-      				<td>${appointment.patient.diagnosisHistory }</td>#d${doctor.doctorID }d
-      				<td><input type="submit" name="edit" value="edit" data-toggle="modal" data-target="#d${appointment.doctorID }d"/></td>
-      				<div id="d${appointment.doctorID }d" class="modal fade" role="dialog">
+      				<td>${appointment.patient.diagnosisHistory }</td>#d${doctor.doctorId }d
+      				<td><input type="submit" name="edit" value="edit" data-toggle="modal" data-target="#d${appointment.doctorId }d"/></td>
+      				<div id="d${appointment.doctorId }d" class="modal fade" role="dialog">
       					<div class="modal-dialog">
       						<div class="modal-content">
       							<div class="modal-header">
@@ -70,7 +70,7 @@
       							</div>
       							<div class="modal-body">
       							<form action="updateailmentsconfirmation" method="post">
-      								<input type="text" name="pid" value="${appointment.patient.patientID }"/>
+      								<input type="text" name="pid" value="${appointment.patient.patientId }"/>
       								<select name="ailment">								
 										<option value="immunology">Immunologist</option>
 										<option value="cardiology">Cardiologist</option>
@@ -113,7 +113,7 @@
       				<td>${doctor.emailID }</td>
       				<td>
       					<form action="getappointmentsfordate" method="post">
-      						<input type="hidden" name="did" value="${doctor.doctorID }"/>
+      						<input type="hidden" name="did" value="${doctor.doctorId }"/>
       						
       						<input type="date" name="date" min="${date }"/>
       						<input type="submit" name="show"/>
@@ -202,7 +202,7 @@
 				<textarea class="form-control" name="history" name="details" rows="3" placeholder="enter history"></textarea>
 <!-- 				<input type="text" name="history" placeholder="enter history"/>	 -->
 			</div>
-         	<input type="hidden" name="pid" value="${profile.profileBean.userID}"/>
+         	<input type="hidden" name="pid" value="${profile.profileBean.userId}"/>
          	<input type="submit" class="btn btn-primary" name="book" value="book"/>
 			</form>
 			</c:otherwise>

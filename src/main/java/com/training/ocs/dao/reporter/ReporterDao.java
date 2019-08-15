@@ -1,15 +1,13 @@
 package com.training.ocs.dao.reporter;
 
-import java.sql.Date;
-import java.util.ArrayList;
-import java.util.List;
-
-import com.training.ocs.bean.AppointmentBean;
-import com.training.ocs.bean.DoctorBean;
-import com.training.ocs.bean.ProfileBean;
+import com.training.ocs.beans.Appointment;
+import com.training.ocs.beans.Doctor;
 import com.training.ocs.exception.CliniqueException;
 
+import java.util.Date;
+import java.util.List;
+
 public interface ReporterDao {
-	List<AppointmentBean> intimateAdmin() throws CliniqueException;//Date date, String status implimented
-	List<DoctorBean> getAvailableDoctors(Date date, String slot) throws CliniqueException;
+	List<Appointment> intimateAdmin() throws CliniqueException;//Date date, String status implimented
+	List<Doctor> getAvailableDoctors(Date date, String slot) throws CliniqueException;
 }
